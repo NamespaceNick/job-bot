@@ -1,6 +1,6 @@
-# Job.py
-Keeps track of job postings and sends notifications when new ones come out\\
-\\
+# jobs.py
+Keeps track of job postings and sends notifications when new ones come out<br />
+<br />
 I got tired of manually checking job postings, and I wanted to get more
 experience with python modules like `requests`, `bs4` and `logging`
 
