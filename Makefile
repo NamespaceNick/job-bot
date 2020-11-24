@@ -1,5 +1,5 @@
 default:
-	python jobs.py
+	- python jobs.py
 
 init:
 	pip install -r requirements.txt
@@ -10,4 +10,4 @@ run_tests:
 	- python -m pytest tests
 
 clean:
-	rm -rf */__pycache__ .pytest_cache
+	rm -rf __pycache__ */__pycache__ .pytest_cache
