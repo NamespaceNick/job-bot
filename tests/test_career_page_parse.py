@@ -5,11 +5,10 @@ import jobs
 
 def test_sucker_punch_jobs_list_titles():
     html_text = ""
-    with open("sources/suckerpunch.html", "r") as src:
+    with open("tests/sources/suckerpunch.html", "r") as src:
         html_text = src.read()
 
-    css_val = "sc-fYxtnH leAaLw col-12 col-md-4"
-    company = "Sucker Punch Productions"
+    css_attrs = {"class": "sc-fYxtnH leAaLw col-12 col-md-4"}
 
     job_titles_solution = [
         "DESIGN - Narrative Writer",
@@ -21,11 +20,9 @@ def test_sucker_punch_jobs_list_titles():
         "ART - Senior Lighting Artist",
     ]
 
-    job_postings = jobs.acquire_job_postings(html_text, company, css_val)
+    job_postings = jobs.acquire_job_postings(html_text, css_attrs)
 
-    acquired_job_titles = [jp["title"] for jp in job_postings]
-
-    assert acquired_job_titles == job_titles_solution
+    assert job_postings == job_titles_solution
 
 
 def test_sucker_punch_jobs_list_basic():
