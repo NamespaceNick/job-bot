@@ -42,17 +42,29 @@ def acquire_webpages():
     return companies
 
 
-# Returns a list of JobPostings parsed from the webpage text
-def acquire_job_postings(company_dict: dict):
-    webpage_html = requests.get(company_dict["url"]).text
-    soup = BeautifulSoup(webpage_html, "html.parser")
+# Returns a dictionary of lists of JobPostings parsed from each company website
+# Keys are disciplines
+def acquire_job_postings(company_dict_list):
+    jobs = {
+        "Art": [],
+        "Audio": [],
+        "Design": [],
+        "Production": [],
+        "Programming": [],
+    }
 
-    attr_dict = {company_dict["attribute"]: company_dict["attr_val"]}
-    job_titles = [entry.string.strip() for entry in soup.find_all(attrs=attr_dict)]
+    for c in company_dict_list:
+        # Acquire html text of company career page
+        webpage_html = requests.get(c["url"]).text
+        soup = BeautifulSoup(webpage_html, "html.parser")
 
-    jobs = []
-    for jt in job_titles:
-        jobs.append(JobPosting(jt, company_dict["company"], company_dict["url"]))
+        # Identify all jobs posted on company site
+        attr_dict = {c["attribute"]: c["attr_val"]}
+        job_titles = [entry.string.strip() for entry in soup.find_all(attrs=attr_dict)]
+
+        # Append jobs to aggreggated list
+        for jt in job_titles:
+            jobs[categorize_job(jt)].append(JobPosting(jt, c["company"], c["url"]))
 
     return jobs
 
@@ -63,7 +75,16 @@ def filter_jobs(job_list):
     raise NotImplementedError
 
 
+# FIXME: Implement function
+def categorize_job(job_title):
+    return "Art"
+
+
 def update_job_sheet(worksheet_name, updated_jobs):
+    if not updated_jobs:
+        print(f"Jobs for {worksheet_name} is empty. Skipping..")
+        return
+
     ws = spreadsheet.worksheet(worksheet_name)
     last_row_num = len(updated_jobs) + 1  # Header offset
     print(f"Last row number: {last_row_num}")
@@ -75,15 +96,13 @@ def update_job_sheet(worksheet_name, updated_jobs):
 ##############################################################################
 if __name__ == "__main__":
     # Acquire webpages
-    company_webpage_list = acquire_webpages()
+    company_dicts = acquire_webpages()
 
-    all_job_postings = []
     # Get job postings from webpages
-    for c in company_webpage_list:
-        company_jobs = acquire_job_postings(c)
-        all_job_postings.extend(company_jobs)
+    all_jobs = acquire_job_postings(company_dicts)
 
-    update_job_sheet("Production", all_job_postings)
+    for k in all_jobs.keys():
+        update_job_sheet(k, all_jobs[k])
 
     # Filter job postings
 
