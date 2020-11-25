@@ -6,15 +6,14 @@ init:
 	pip install -r requirements.txt
 
 test: run_tests clean
+
+test-diff: run_diff_tests clean
 	
-# Show diff if DIFF variable is defined
-ifeq ($(DIFF),true)
-run_tests:
-	- python -m pytest -vv tests
-else
 run_tests:
 	- python -m pytest tests
-endif
+
+run_diff_tests:
+	- python -m pytest -vv tests
 
 clean:
 	rm -rf __pycache__ */__pycache__ .pytest_cache
