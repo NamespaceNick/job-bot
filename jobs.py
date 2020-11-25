@@ -9,7 +9,11 @@ from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 
 load_dotenv()
-SPREADSHEET_KEY = os.getenv("SPREADSHEET_KEY")
+
+# FIXME: Change back to production spreadsheet key
+# SPREADSHEET_KEY = os.getenv("SPREADSHEET_KEY")
+SPREADSHEET_KEY = os.getenv("DEV_SPREADSHEET_KEY")
+
 SERVICE_ACCOUNT_PATH = os.getenv("SERVICE_ACCOUNT_PATH")
 
 gc = gspread.service_account(filename=SERVICE_ACCOUNT_PATH)
@@ -42,9 +46,8 @@ def filter_jobs(job_list):
 ################################# SCRIPT BODY ################################
 ##############################################################################
 if __name__ == "__main__":
-    company_list = acquire_webpages()
-    print(company_list)
     # Acquire webpages
+    company_webpage_list = acquire_webpages()
 
     # Get job postings from webpages
 
