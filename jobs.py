@@ -11,6 +11,7 @@ import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from loguru import logger
+from pprint import pprint
 from requests_html import HTMLSession
 
 load_dotenv()
@@ -83,7 +84,7 @@ def acquire_job_postings(company_dict_list):
 
 def parse_jobs_page(response_html, selector):
     job_titles = [el.text for el in response_html.find(selector)]
-    print(job_titles)
+    pprint(job_titles)
     return job_titles
 
 
@@ -143,8 +144,9 @@ def update_job_sheet(worksheet_name, updated_jobs):
 
     ws = spreadsheet.worksheet(worksheet_name)
     last_row_num = len(updated_jobs) + 1  # Header offset
-    print(f"Last row number: {last_row_num}")
     ws.update(f"A2:C{last_row_num}", [j.spreadsheet_format() for j in updated_jobs])
+
+    logger.success(f"{worksheet_name} worksheet updated.")
 
 
 ##############################################################################
@@ -159,5 +161,7 @@ if __name__ == "__main__":
 
     for k in all_jobs.keys():
         update_job_sheet(k, all_jobs[k])
+
+    logger.success("Spreadsheet updated.")
 
     # Update spreadsheet with postings
