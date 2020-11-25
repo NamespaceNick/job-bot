@@ -87,6 +87,9 @@ def filter_jobs(job_title_list):
         "manager",
         "principal",
         "senior",
+        "m.s.",
+        "ph.d",
+        "mba",
     ]
 
     filtered_list = []
