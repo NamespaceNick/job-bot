@@ -34,7 +34,7 @@ class JobPosting:
 
 
 # Acquire company webpages from google sheet configuration tab
-# {"company":.., "url":.., "attribute":.., "attr_val":..}
+# {"company":.., "url":.., "selector":..}
 def acquire_webpages():
     # TODO: Implement this function
     config_ws = spreadsheet.worksheet("Configuration")
@@ -58,17 +58,24 @@ def acquire_job_postings(company_dict_list):
     for c in company_dict_list:
         # Acquire html text of company career page
         webpage_html = requests.get(c["url"]).text
-        soup = BeautifulSoup(webpage_html, "html.parser")
-
-        # Identify all jobs posted on company site
-        attr_dict = {c["attribute"]: c["attr_val"]}
-        job_titles = [entry.string.strip() for entry in soup.find_all(attrs=attr_dict)]
+        # TODO: Smaller function here.
+        webpage_jobs = parse_jobs_page(webpage_html, c["selector"])
 
         # Append jobs to aggreggated list
-        for jt in filter_jobs(job_titles):
-            jobs[categorize_job(jt)].append(JobPosting(jt, c["company"], c["url"]))
+        for jt in filter_jobs(webpage_jobs):
+            discipline = categorize_job(jt)
+            jobs[discipline].append(JobPosting(jt, c["company"], c["url"]))
 
     return jobs
+
+
+def parse_jobs_page(html_text, selector):
+    # TODO Implement this function
+    soup = BeautifulSoup(html_text, "html.parser")
+
+    # Identify all jobs posted on company site
+    job_titles = [entry.string.strip() for entry in soup.select(selector)]
+    return job_titles
 
 
 # Filters out irrelevant job postings such as senior positions
