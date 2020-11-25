@@ -11,6 +11,7 @@ experience with python modules like `requests`, `bs4` and `logging`
 - [x] Integrate `logging` library
 - [ ] Improve identification of entry-level positions (Potentially add highlight?)
 - [ ] Hookup to server for continuous execution
+- [ ] Support dynamically rendered job posting content
 - [ ] Support multi-url configuration for larger companies
 - [ ] Support targeted spreadsheet updating instead of complete overwriting
 - [ ] Track how long a job has been posted
