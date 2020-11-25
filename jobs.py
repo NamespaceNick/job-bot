@@ -18,7 +18,9 @@ spreadsheet = gc.open_by_key(SPREADSHEET_KEY)
 # TODO: Acquire ALL webpages from perm storage
 def acquire_webpages():
     # TODO: Implement this function
-    raise NotImplementedError
+    config_ws = spreadsheet.worksheet("Configuration")
+    companies = config_ws.get_all_records()
+    return companies
 
 
 # Returns the list of job positions within the webpage text
@@ -40,7 +42,8 @@ def filter_jobs(job_list):
 ################################# SCRIPT BODY ################################
 ##############################################################################
 if __name__ == "__main__":
-    pass
+    company_list = acquire_webpages()
+    print(company_list)
     # Acquire webpages
 
     # Get job postings from webpages
