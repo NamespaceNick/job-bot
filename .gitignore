@@ -1,5 +1,6 @@
-# Personal
+# Custom .gitignore additions
 *.swp
+service_account.json
 
 
 # Byte-compiled / optimized / DLL files
