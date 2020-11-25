@@ -9,7 +9,9 @@ experience with python modules like `requests`, `bs4` and `logging`
 - [x] Aggregate job postings in Google Sheet
 - [ ] Integrate `logging` library
 - [ ] Support identifying job titles based on parented css attributes
+- [ ] Hookup to server for continuous execution
 - [ ] Support multi-url configuration for larger companies
+- [ ] Support targeted spreadsheet updating instead of complete overwriting
 - [ ] Track how long a job has been posted
 - [ ] Send Discord notifications for new job postings
 - [ ] Send Discord notifications upon errors
