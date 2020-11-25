@@ -7,9 +7,9 @@ experience with python modules like `requests`, `bs4` and `logging`
 ## Functionality
 - [x] Allow webpage configuration through spreadsheet
 - [x] Aggregate job postings in Google Sheet
-- [ ] Support identifying job titles based on parented css attributes
+- [x] Support identifying job titles based on parented css attributes
+- [x] Integrate `logging` library
 - [ ] Improve identification of entry-level positions (Potentially add highlight?)
-- [ ] Integrate `logging` library
 - [ ] Hookup to server for continuous execution
 - [ ] Support multi-url configuration for larger companies
 - [ ] Support targeted spreadsheet updating instead of complete overwriting
