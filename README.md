@@ -8,4 +8,6 @@ experience with python modules like `requests`, `bs4` and `logging`
 - [ ] Aggregate job postings in Google Sheet
 - [ ] Send Discord notifications for new job postings
 - [ ] Send Discord notifications upon errors
+- [ ] Allow webpage configuration through spreadsheet
+- [ ] Track how long a job has been posted
 - [ ] Include link to job posting in spreadsheet
