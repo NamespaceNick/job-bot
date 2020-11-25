@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# test_gspread_permissions.py
+# test_gsheet_permissions.py
 # Tests basic gspread functionality to ensure we have proper permissions for
 # the Google Sheet
 import jobs
