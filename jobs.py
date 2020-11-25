@@ -46,11 +46,13 @@ def acquire_webpages():
 # Keys are disciplines
 def acquire_job_postings(company_dict_list):
     jobs = {
+        "Animation": [],
         "Art": [],
         "Audio": [],
         "Design": [],
         "Production": [],
         "Programming": [],
+        "Misc": [],
     }
 
     for c in company_dict_list:
@@ -63,21 +65,56 @@ def acquire_job_postings(company_dict_list):
         job_titles = [entry.string.strip() for entry in soup.find_all(attrs=attr_dict)]
 
         # Append jobs to aggreggated list
-        for jt in job_titles:
+        for jt in filter_jobs(job_titles):
             jobs[categorize_job(jt)].append(JobPosting(jt, c["company"], c["url"]))
 
     return jobs
 
 
 # Filters out irrelevant job postings such as senior positions
-def filter_jobs(job_list):
-    # TODO: Implement this function
-    raise NotImplementedError
+def filter_jobs(job_title_list):
+    excluded_keywords = [
+        "director",
+        "executive",
+        "lead",
+        "manager",
+        "principal",
+        "senior",
+    ]
+
+    filtered_list = []
+
+    for title in job_title_list:
+        if not any(kw in title.lower() for kw in excluded_keywords):
+            filtered_list.append(title)
+
+    return filtered_list
 
 
-# FIXME: Implement function
 def categorize_job(job_title):
-    return "Art"
+    # NOTE: Ordered to avoid false positives (e.g. "design" in "sound designer")
+    discipline_keywords = {
+        "Production": ["producer", "project manager", "product manager", "production"],
+        "Animation": ["animator", "rigger", "rigging"],
+        "Art": ["artist"],
+        "Audio": ["sound designer", "composer", "sound", "audio", "sfx"],
+        "Design": ["designer"],
+        "Programming": [
+            "coder",
+            "developer",
+            "engineer",
+            "engineering",
+            "programmer",
+            "programming",
+        ],
+    }
+
+    for discipline, keywords in discipline_keywords.items():
+        if any(kw in job_title.lower() for kw in keywords):  # Any keywords in job title
+            return discipline
+
+    # Doesn't match any disciplines
+    return "Misc"
 
 
 def update_job_sheet(worksheet_name, updated_jobs):
@@ -103,7 +140,5 @@ if __name__ == "__main__":
 
     for k in all_jobs.keys():
         update_job_sheet(k, all_jobs[k])
-
-    # Filter job postings
 
     # Update spreadsheet with postings
