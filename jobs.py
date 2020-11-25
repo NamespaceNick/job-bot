@@ -4,6 +4,7 @@
 import os
 
 import gspread
+import requests
 
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
@@ -19,7 +20,21 @@ SERVICE_ACCOUNT_PATH = os.getenv("SERVICE_ACCOUNT_PATH")
 gc = gspread.service_account(filename=SERVICE_ACCOUNT_PATH)
 spreadsheet = gc.open_by_key(SPREADSHEET_KEY)
 
-# TODO: Acquire ALL webpages from perm storage
+
+class JobPosting:
+    """Class to contain information relating to job postings."""
+
+    def __init__(self, title, company, url):
+        self._title = title
+        self._company = company
+        self._url = url
+
+    def spreadsheet_format(self):
+        return [self._title, self._company, self._url]
+
+
+# Acquire company webpages from google sheet configuration tab
+# {"company":.., "url":.., "attribute":.., "attr_val":..}
 def acquire_webpages():
     # TODO: Implement this function
     config_ws = spreadsheet.worksheet("Configuration")
@@ -27,12 +42,18 @@ def acquire_webpages():
     return companies
 
 
-# Returns the list of job positions within the webpage text
-# css_attrs is used to identify how job titles are formatted in the html doc
-# css_attrs = "<css_attribute>" : "<attribute_value>"
-def acquire_job_postings(webpage_html, css_attrs: dict):
-    webpage_soup = BeautifulSoup(webpage_html, "html.parser")
-    jobs = [entry.string.strip() for entry in webpage_soup.find_all(attrs=css_attrs)]
+# Returns a list of JobPostings parsed from the webpage text
+def acquire_job_postings(company_dict: dict):
+    webpage_html = requests.get(company_dict["url"]).text
+    soup = BeautifulSoup(webpage_html, "html.parser")
+
+    attr_dict = {company_dict["attribute"]: company_dict["attr_val"]}
+    job_titles = [entry.string.strip() for entry in soup.find_all(attrs=attr_dict)]
+
+    jobs = []
+    for jt in job_titles:
+        jobs.append(JobPosting(jt, company_dict["company"], company_dict["url"]))
+
     return jobs
 
 
@@ -42,6 +63,13 @@ def filter_jobs(job_list):
     raise NotImplementedError
 
 
+def update_job_sheet(worksheet_name, updated_jobs):
+    ws = spreadsheet.worksheet(worksheet_name)
+    last_row_num = len(updated_jobs) + 1  # Header offset
+    print(f"Last row number: {last_row_num}")
+    ws.update(f"A2:C{last_row_num}", [j.spreadsheet_format() for j in updated_jobs])
+
+
 ##############################################################################
 ################################# SCRIPT BODY ################################
 ##############################################################################
@@ -49,7 +77,13 @@ if __name__ == "__main__":
     # Acquire webpages
     company_webpage_list = acquire_webpages()
 
+    all_job_postings = []
     # Get job postings from webpages
+    for c in company_webpage_list:
+        company_jobs = acquire_job_postings(c)
+        all_job_postings.extend(company_jobs)
+
+    update_job_sheet("Production", all_job_postings)
 
     # Filter job postings
 
