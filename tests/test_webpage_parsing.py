@@ -41,3 +41,6 @@ def test_parse_relative_selector_job_postings():
     ]
 
     assert jobs.parse_jobs_page(html_text, selector) == parsed_jobs_solution
+
+def test_edge_no_jobs_matching_selector():
+    assert False

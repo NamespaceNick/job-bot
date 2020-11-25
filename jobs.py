@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # jobs.py
 # Main script
+import asyncio
+import nest_asyncio
 import os
 
 import gspread
@@ -8,8 +10,11 @@ import requests
 
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
+from loguru import logger
+from requests_html import HTMLSession
 
 load_dotenv()
+session = HTMLSession()
 
 # FIXME: Change back to production spreadsheet key
 # SPREADSHEET_KEY = os.getenv("SPREADSHEET_KEY")
@@ -55,11 +60,18 @@ def acquire_job_postings(company_dict_list):
         "Misc": [],
     }
 
+    # TODO: Potentially acquire webpages async to avoid slow scripts
     for c in company_dict_list:
+        logger.info(f"[{c['company']}] Acquiring jobs...")
         # Acquire html text of company career page
-        webpage_html = requests.get(c["url"]).text
-        # TODO: Smaller function here.
-        webpage_jobs = parse_jobs_page(webpage_html, c["selector"])
+        # webpage_html = requests.get(c["url"]).text
+        webpage_request = session.get(c["url"]).html
+        # TODO: Check response status
+        webpage_jobs = parse_jobs_page(webpage_request, c["selector"])
+
+        if not webpage_jobs:  # No jobs found
+            logger.info(f"[{c['company']}] No jobs found.")
+            continue
 
         # Append jobs to aggreggated list
         for jt in filter_jobs(webpage_jobs):
@@ -69,12 +81,9 @@ def acquire_job_postings(company_dict_list):
     return jobs
 
 
-def parse_jobs_page(html_text, selector):
-    # TODO Implement this function
-    soup = BeautifulSoup(html_text, "html.parser")
-
-    # Identify all jobs posted on company site
-    job_titles = [entry.string.strip() for entry in soup.select(selector)]
+def parse_jobs_page(response_html, selector):
+    job_titles = [el.text for el in response_html.find(selector)]
+    print(job_titles)
     return job_titles
 
 
@@ -106,7 +115,7 @@ def categorize_job(job_title):
     discipline_keywords = {
         "Production": ["producer", "project manager", "product manager", "production"],
         "Animation": ["animator", "rigger", "rigging"],
-        "Art": ["artist"],
+        "Art": ["art", "artist"],
         "Audio": ["sound designer", "composer", "sound", "audio", "sfx"],
         "Design": ["designer"],
         "Programming": [
