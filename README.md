@@ -19,3 +19,8 @@ experience with python modules like `requests`, `bs4` and `logging`
 - [ ] Send Discord notifications upon errors
 - [ ] Include link to *specific* job posting in spreadsheet
 - [ ] Support search / filtered career pages (Blizzard, Epic, etc.)
+
+## Supported Career Pages
+* [Jackbox Games](https://jackbox-games.breezy.hr/)
+* [Riot Games (University Programs)](https://www.riotgames.com/en/university-programs)
+* [Sucker Punch Productions](https://jobs.suckerpunch.com)
