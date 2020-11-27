@@ -4,11 +4,11 @@ Keeps track of job postings and sends notifications when new ones come out<br />
 I got tired of manually checking job postings, and I wanted to get more
 experience with python modules like `requests`, `bs4` and `logging`
 
-## Functionality
-- [x] Allow webpage configuration through spreadsheet
-- [x] Aggregate job postings in Google Sheet
-- [x] Support identifying job titles based on parented css attributes
-- [x] Integrate `logging` library
+## Features
+- [x] ~~Allow webpage configuration through spreadsheet~~
+- [x] ~~Aggregate job postings in Google Sheet~~
+- [x] ~~Support identifying job titles based on parented css attributes~~
+- [x] ~~Integrate `logging` library~~
 - [ ] Improve identification of entry-level positions (Potentially add highlight?)
 - [ ] Hookup to server for continuous execution
 - [ ] Support dynamically rendered job posting content
