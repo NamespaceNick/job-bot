@@ -14,6 +14,7 @@ experience with python modules like `requests`, `bs4` and `logging`
 - [ ] Support dynamically rendered job posting content
 - [ ] Support multi-url configuration for larger companies
 - [ ] Support targeted spreadsheet updating instead of complete overwriting
+- [ [ Support organic & builtin method of utilizing prod vs dev spreadsheet
 - [ ] Track how long a job has been posted
 - [ ] Send Discord notifications for new job postings
 - [ ] Send Discord notifications upon errors

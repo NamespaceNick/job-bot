@@ -18,8 +18,7 @@ load_dotenv()
 session = HTMLSession()
 
 # FIXME: Change back to production spreadsheet key
-# SPREADSHEET_KEY = os.getenv("SPREADSHEET_KEY")
-SPREADSHEET_KEY = os.getenv("DEV_SPREADSHEET_KEY")
+SPREADSHEET_KEY = os.getenv("SPREADSHEET_KEY")
 
 SERVICE_ACCOUNT_PATH = os.getenv("SERVICE_ACCOUNT_PATH")
 
@@ -52,7 +51,6 @@ class JobPosting:
 # Acquire company webpages from google sheet configuration tab
 # {"company":.., "url":.., "selector":..}
 def acquire_webpages():
-    # TODO: Implement this function
     config_ws = spreadsheet.worksheet("Configuration")
     companies = config_ws.get_all_records()
     return companies
@@ -75,7 +73,6 @@ def acquire_job_postings(company_dict_list):
     for c in company_dict_list:
         logger.info(f"[{c['company']}] Acquiring jobs...")
         # Acquire html text of company career page
-        # webpage_html = requests.get(c["url"]).text
         webpage_request = session.get(c["url"]).html
         # TODO: Check response status
         webpage_jobs = parse_jobs_page(webpage_request, c["selector"])
@@ -184,10 +181,8 @@ def highlight_entry_level_postings(worksheet):
     for row_num, job_title in enumerate(
         worksheet.col_values(1)[1:], start=2
     ):  # Omit header
-        # FIXME: Need to format all at once or else too many requests
+        # FIXME: Change to bulk update to avoid exceeding max request limit
         if is_entry_level(job_title):
-            # TODO: Highlight the row
-            # TODO: Clear out previous highlighting / worksheet data
             worksheet.format(
                 f"A{row_num}:G{row_num}", {"backgroundColor": ENTRY_LEVEL_HIGHLIGHT}
             )
