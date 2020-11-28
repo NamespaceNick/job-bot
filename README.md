@@ -11,13 +11,13 @@ experience with python modules like `requests`, `bs4` and `logging`
 - [x] ~~Integrate `logging` library~~
 - [x] ~~Highlight entry-level positions~~
 - [ ] Hookup to server for continuous execution
+- [ ] Send Discord notifications for new job postings
+- [ ] Send Discord notifications upon errors
 - [ ] Support dynamically rendered job posting content
+- [ ] Track how long a job has been posted
 - [ ] Support multi-url configuration for larger companies
 - [ ] Support targeted spreadsheet updating instead of complete overwriting
 - [ [ Support organic & builtin method of utilizing prod vs dev spreadsheet
-- [ ] Track how long a job has been posted
-- [ ] Send Discord notifications for new job postings
-- [ ] Send Discord notifications upon errors
 - [ ] Include link to *specific* job posting in spreadsheet
 - [ ] Support search / filtered career pages (Blizzard, Epic, etc.)
 
