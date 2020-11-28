@@ -26,6 +26,16 @@ SERVICE_ACCOUNT_PATH = os.getenv("SERVICE_ACCOUNT_PATH")
 gc = gspread.service_account(filename=SERVICE_ACCOUNT_PATH)
 spreadsheet = gc.open_by_key(SPREADSHEET_KEY)
 
+ENTRY_LEVEL_HIGHLIGHT = {
+    "red": 52 / 255,
+    "green": 168 / 255,
+    "blue": 83 / 255,
+}
+
+WHITE_BACKGROUND_COLOR = {"red": 1.0, "green": 1.0, "blue": 1.0}
+
+# TODO: Create a class to hold the spreadsheet to be passed to functions
+
 
 class JobPosting:
     """Class to contain information relating to job postings."""
@@ -137,16 +147,62 @@ def categorize_job(job_title):
     return "Misc"
 
 
-def update_job_sheet(worksheet_name, updated_jobs):
+def update_job_sheet(worksheet, updated_jobs):
+    clear_worksheet(worksheet)
     if not updated_jobs:
-        print(f"Jobs for {worksheet_name} is empty. Skipping..")
+        print(f"Jobs for {worksheet.title} is empty. Skipping..")
         return
 
-    ws = spreadsheet.worksheet(worksheet_name)
     last_row_num = len(updated_jobs) + 1  # Header offset
-    ws.update(f"A2:C{last_row_num}", [j.spreadsheet_format() for j in updated_jobs])
+    worksheet.update(
+        f"A2:C{last_row_num}", [j.spreadsheet_format() for j in updated_jobs]
+    )
+    highlight_entry_level_postings(worksheet)
 
-    logger.success(f"{worksheet_name} worksheet updated.")
+    logger.success(f"{worksheet.title} worksheet updated.")
+
+
+def clear_worksheet(worksheet):
+    clear_highlighting(worksheet)
+    num_rows = len(worksheet.col_values(1)) - 1
+    if num_rows > 0:
+        logger.info(f"Cleared {worksheet.title}!A2:G{1+num_rows}")
+        spreadsheet.values_clear(f"{worksheet.title}!A2:G{1+num_rows}")
+
+
+# TODO: Ensure highlighting is cleared for empty rows
+def clear_highlighting(worksheet):
+    num_rows = len(worksheet.col_values(1)) - 1
+    if num_rows > 0:  # No job entries
+        worksheet.format(
+            f"A2:G{1+num_rows}", {"backgroundColor": WHITE_BACKGROUND_COLOR}
+        )
+        logger.debug(f"Cleared highlighting for {worksheet.title}!A2:G{1+num_rows}")
+
+
+def highlight_entry_level_postings(worksheet):
+    for row_num, job_title in enumerate(
+        worksheet.col_values(1)[1:], start=2
+    ):  # Omit header
+        # FIXME: Need to format all at once or else too many requests
+        if is_entry_level(job_title):
+            # TODO: Highlight the row
+            # TODO: Clear out previous highlighting / worksheet data
+            worksheet.format(
+                f"A{row_num}:G{row_num}", {"backgroundColor": ENTRY_LEVEL_HIGHLIGHT}
+            )
+
+
+def is_entry_level(job_title):
+    ENTRY_LEVEL_KEYWORDS = [
+        "associate",
+        "assistant",
+        "junior",
+        "intern",
+        "internship",
+        "entry",
+    ]
+    return any(kw in job_title.lower() for kw in ENTRY_LEVEL_KEYWORDS)
 
 
 ##############################################################################
@@ -159,9 +215,8 @@ if __name__ == "__main__":
     # Get job postings from webpages
     all_jobs = acquire_job_postings(company_dicts)
 
+    # Update spreadsheet with postings
     for k in all_jobs.keys():
-        update_job_sheet(k, all_jobs[k])
+        update_job_sheet(spreadsheet.worksheet(k), all_jobs[k])
 
     logger.success("Spreadsheet updated.")
-
-    # Update spreadsheet with postings

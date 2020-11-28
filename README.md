@@ -9,7 +9,7 @@ experience with python modules like `requests`, `bs4` and `logging`
 - [x] ~~Aggregate job postings in Google Sheet~~
 - [x] ~~Support identifying job titles based on parented css attributes~~
 - [x] ~~Integrate `logging` library~~
-- [ ] Improve identification of entry-level positions (Potentially add highlight?)
+- [x] ~~Highlight entry-level positions~~
 - [ ] Hookup to server for continuous execution
 - [ ] Support dynamically rendered job posting content
 - [ ] Support multi-url configuration for larger companies
