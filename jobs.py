@@ -1,20 +1,18 @@
 #!/usr/bin/env python3
 # jobs.py
 # Main script
+import datetime
 import os
 
 import gspread
-import requests
 
 from dotenv import load_dotenv
 from loguru import logger
-from pprint import pprint
 from requests_html import HTMLSession
 
 load_dotenv()
 session = HTMLSession()
 
-# FIXME: Change back to production spreadsheet key
 SPREADSHEET_KEY = os.getenv("SPREADSHEET_KEY")
 
 SERVICE_ACCOUNT_PATH = os.getenv("SERVICE_ACCOUNT_PATH")
@@ -88,7 +86,6 @@ def acquire_job_postings(company_dict_list):
 
 def parse_jobs_page(response_html, selector):
     job_titles = [el.text for el in response_html.find(selector)]
-    pprint(job_titles)
     return job_titles
 
 
@@ -184,7 +181,7 @@ def highlight_entry_level_postings(worksheet):
                 f"A{row_num}:G{row_num}", {"backgroundColor": ENTRY_LEVEL_HIGHLIGHT}
             )
 
-
+@logger.catch
 def is_entry_level(job_title):
     ENTRY_LEVEL_KEYWORDS = [
         "associate",
@@ -200,6 +197,7 @@ def is_entry_level(job_title):
 ##############################################################################
 ################################# SCRIPT BODY ################################
 ##############################################################################
+# @logger.catch  # Catch & log all errors
 if __name__ == "__main__":
     # Acquire webpages
     company_dicts = acquire_webpages()
@@ -212,3 +210,8 @@ if __name__ == "__main__":
         update_job_sheet(spreadsheet.worksheet(k), all_jobs[k])
 
     logger.success("Spreadsheet updated.")
+
+    # Mark update in spreadsheet
+    info_ws = spreadsheet.worksheet("INFO")
+    time_now = datetime.datetime.now().strftime(f"%m/%d %I:%M:%S %p")
+    info_ws.update("A2", f"Last Updated: {time_now} (GMT-5)")
