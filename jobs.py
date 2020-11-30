@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
 # jobs.py
 # Main script
-import asyncio
-import nest_asyncio
 import os
 
 import gspread
 import requests
 
-from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from loguru import logger
 from pprint import pprint
