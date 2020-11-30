@@ -10,7 +10,8 @@ experience with python modules like `requests`, `bs4` and `logging`
 - [x] ~~Support identifying job titles based on parented css attributes~~
 - [x] ~~Integrate `logging` library~~
 - [x] ~~Highlight entry-level positions~~
-- [ ] Hookup to server for continuous execution
+- [x] ~~Hookup to server for continuous execution~~
+- [ ] Log updates on sheet
 - [ ] Send Discord notifications for new job postings
 - [ ] Send Discord notifications upon errors
 - [ ] Support dynamically rendered job posting content
