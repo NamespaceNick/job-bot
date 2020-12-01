@@ -10,7 +10,8 @@ experience with python modules like `requests`, `bs4` and `logging`
 - [x] ~~Support identifying job titles based on parented css attributes~~
 - [x] ~~Integrate `logging` library~~
 - [x] ~~Highlight entry-level positions~~
-- [ ] Hookup to server for continuous execution
+- [x] ~~Hookup to server for continuous execution~~
+- [x] ~~Log updates on sheet~~
 - [ ] Send Discord notifications for new job postings
 - [ ] Send Discord notifications upon errors
 - [ ] Support dynamically rendered job posting content
@@ -21,7 +22,7 @@ experience with python modules like `requests`, `bs4` and `logging`
 - [ ] Include link to *specific* job posting in spreadsheet
 - [ ] Support search / filtered career pages (Blizzard, Epic, etc.)
 
-## Supported Career Pages
+## Currently Supported Career Pages
 * [Jackbox Games](https://jackbox-games.breezy.hr/)
 * [Riot Games (University Programs)](https://www.riotgames.com/en/university-programs)
 * [Sucker Punch Productions](https://jobs.suckerpunch.com)
