@@ -122,10 +122,10 @@ def categorize_job(job_title):
     # NOTE: Ordered to avoid false positives (e.g. "design" in "sound designer")
     discipline_keywords = {
         "Production": ["producer", "project manager", "product manager", "production"],
-        "Animation": ["animator", "rigger", "rigging"],
-        "Art": ["art", "artist"],
+        "Animation": ["animation", "animator", "rigger", "rigging"],
+        "Art": ["art", "artist", "vfx"],
         "Audio": ["sound designer", "composer", "sound", "audio", "sfx"],
-        "Design": ["designer"],
+        "Design": ["design", "designer"],
         "Programming": [
             "coder",
             "developer",
