@@ -8,17 +8,19 @@ import gspread
 
 from dotenv import load_dotenv
 from loguru import logger
-from requests_html import HTMLSession
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 
 load_dotenv()
-session = HTMLSession()
 
 SPREADSHEET_KEY = os.getenv("SPREADSHEET_KEY")
-
 SERVICE_ACCOUNT_PATH = os.getenv("SERVICE_ACCOUNT_PATH")
 
-gc = gspread.service_account(filename=SERVICE_ACCOUNT_PATH)
-spreadsheet = gc.open_by_key(SPREADSHEET_KEY)
+google_sheets_connection = gspread.service_account(filename=SERVICE_ACCOUNT_PATH)
+spreadsheet = google_sheets_connection.open_by_key(SPREADSHEET_KEY)
 
 ENTRY_LEVEL_HIGHLIGHT = {
     "red": 52 / 255,
@@ -41,6 +43,14 @@ class JobPosting:
 
     def spreadsheet_format(self):
         return [self._title, self._company, self._url]
+
+
+def get_webdriver():
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-extensions")
+    chrome_options.add_argument("--disable-gpu")
+    return webdriver.Chrome(options=chrome_options)
 
 
 # Acquire company webpages from google sheet configuration tab
@@ -68,9 +78,8 @@ def acquire_job_postings(company_dict_list):
     for c in company_dict_list:
         logger.info(f"[{c['company']}] Acquiring jobs...")
         # Acquire html text of company career page
-        webpage_request = session.get(c["url"]).html
         # TODO: Check response status
-        webpage_jobs = parse_jobs_page(webpage_request, c["selector"])
+        webpage_jobs = parse_jobs_page(c["url"], c["selector"])
 
         if not webpage_jobs:  # No jobs found
             logger.info(f"[{c['company']}] No jobs found.")
@@ -84,9 +93,21 @@ def acquire_job_postings(company_dict_list):
     return jobs
 
 
-def parse_jobs_page(response_html, selector):
-    job_titles = [el.text for el in response_html.find(selector)]
-    return job_titles
+# TODO: Re-use driver for performance
+def parse_jobs_page(url, selector):
+    job_titles = []
+    driver = get_webdriver()
+    driver.get(url)
+    try:
+        job_web_elements = WebDriverWait(driver, 10).until(
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, selector))
+        )
+        job_titles = [web_element.text for web_element in job_web_elements]
+        logger.debug(job_titles)
+    except:
+        logger.error(f"Timeout occured for url: {url}")
+    finally:
+        return job_titles
 
 
 # Filters out irrelevant job postings such as senior positions
@@ -180,6 +201,7 @@ def highlight_entry_level_postings(worksheet):
             worksheet.format(
                 f"A{row_num}:G{row_num}", {"backgroundColor": ENTRY_LEVEL_HIGHLIGHT}
             )
+
 
 @logger.catch
 def is_entry_level(job_title):
