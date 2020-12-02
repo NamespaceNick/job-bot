@@ -210,6 +210,7 @@ if __name__ == "__main__":
         update_job_sheet(spreadsheet.worksheet(k), all_jobs[k])
 
     logger.success("Spreadsheet updated.")
+    print(f"Spreadsheet was successfully updated.")
 
     # Mark update in spreadsheet
     info_ws = spreadsheet.worksheet("INFO")
